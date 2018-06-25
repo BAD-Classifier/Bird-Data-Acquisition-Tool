@@ -22,9 +22,20 @@ totalPages = data['numPages']
 # recordingsPerPage = data[len(data['recordings'])]
 
 print(totalPages)
-print(data['recordings'][110])
-birdSoundURL = data['recordings'][117]['file']
+print(data['recordings'][0])
+birdName = data['recordings'][0]['en']
+soundID = data['recordings'][0]['id']
+birdSoundURL = data['recordings'][0]['file']
 birdSoundURL = birdSoundURL[2:]
 print(birdSoundURL)
+birdSoundURL = "http://"+birdSoundURL
+r = requests.get(birdSoundURL, stream = True)
+fileName = soundID + '-' + birdName + '.mp3'
+
+
+with open(fileName, 'wb') as f:
+    for chunk in r.iter_content(chunk_size = 1024):
+        if chunk:
+            f.write(chunk)
 # print(recordingsPerPage)
 # urllib.request.urlretrieve(birdSoundURL, 'tweetie.mp3')

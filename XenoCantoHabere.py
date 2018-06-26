@@ -28,6 +28,8 @@ for page in range(1, totalPages):
     recordingsPerPage = len(data['recordings'])
     for recording in range(0, recordingsPerPage-1):
 
+        birdGenus = data['recordings'][recording]['gen']
+        birdSpecies = data['recordings'][recording]['sp']
         birdName = data['recordings'][recording]['en']
         soundID = data['recordings'][recording]['id']
         birdSoundURL = data['recordings'][recording]['file']
@@ -36,15 +38,15 @@ for page in range(1, totalPages):
 
         r = requests.get(birdSoundURL, stream=True)
 
-        path = os.getcwd() + '/BirdSounds/page' + str(page) +'/'
+        path = os.getcwd() + '/BirdSounds_1/page' + str(page) +'/'
 
         if not os.path.exists(path):
             os.makedirs(path)
 
-        fileName = path + soundID + '-' + birdName + '.mp3'
+        fileName = path + birdGenus + '-' + birdSpecies + '-' + birdName + '-' + soundID + '.mp3'
         total_size = int(r.headers['content-length'])
 
-        print(str(soundNumber) + ") Downloading " + soundID + '-' + birdName + '.mp3')
+        print(str(soundNumber) + ") Downloading " +birdGenus + '-' + birdSpecies + '-' + birdName + '-' + soundID + '.mp3')
         with open(fileName, 'wb') as f:
             for chunk in tqdm(iterable = r.iter_content(chunk_size=chunk_size), total = total_size/chunk_size, unit = 'KB'):
                 if chunk:

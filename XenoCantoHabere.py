@@ -1,41 +1,56 @@
 import json
 import requests
 import urllib.request
+import os
+from tqdm import tqdm
+# Requires the pip packages to be installed
 
-# Requires the pip package
-
+# Specify API endpoint to the recordings in the country of South Africa
 baseAPIEndPoint = 'http://www.xeno-canto.org/api/2/recordings?query=cnt:south_africa'
+pageAPIEndPoint = 'http://www.xeno-canto.org/api/2/recordings?query=cnt:south_africa&page='
+apiPage = 1
+chunk_size = 1024
+soundNumber = 1
+
+# Use a GET request and store in the response object
 response = requests.get(baseAPIEndPoint)
 data = response.json()
-
-
-
-# Print the status code of the response.
-print(response.headers)
-print(data)
-print(data['numRecordings'])
 
 numberOfRecordings = data['numRecordings']
 numberOfSpecies = data['numSpecies']
 currentPage = data['page']
 totalPages = data['numPages']
-# recordingsPerPage = data[len(data['recordings'])]
+recordingsPerPage = len(data['recordings'])
 
-print(totalPages)
-print(data['recordings'][0])
-birdName = data['recordings'][0]['en']
-soundID = data['recordings'][0]['id']
-birdSoundURL = data['recordings'][0]['file']
-birdSoundURL = birdSoundURL[2:]
-print(birdSoundURL)
-birdSoundURL = "http://"+birdSoundURL
-r = requests.get(birdSoundURL, stream = True)
-fileName = soundID + '-' + birdName + '.mp3'
+for page in range(1, totalPages):
+    response = requests.get(pageAPIEndPoint + str(page))
+    data = response.json()
+    recordingsPerPage = len(data['recordings'])
+    for recording in range(0, recordingsPerPage-1):
 
+        birdName = data['recordings'][recording]['en']
+        soundID = data['recordings'][recording]['id']
+        birdSoundURL = data['recordings'][recording]['file']
+        birdSoundURL = birdSoundURL[2:]
+        birdSoundURL = "http://" + birdSoundURL
 
-with open(fileName, 'wb') as f:
-    for chunk in r.iter_content(chunk_size = 1024):
-        if chunk:
-            f.write(chunk)
-# print(recordingsPerPage)
-# urllib.request.urlretrieve(birdSoundURL, 'tweetie.mp3')
+        r = requests.get(birdSoundURL, stream=True)
+
+        path = os.getcwd() + '/BirdSounds/page' + str(page) +'/'
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        fileName = path + soundID + '-' + birdName + '.mp3'
+        total_size = int(r.headers['content-length'])
+
+        print(str(soundNumber) + ") Downloading " + soundID + '-' + birdName + '.mp3')
+        with open(fileName, 'wb') as f:
+            for chunk in tqdm(iterable = r.iter_content(chunk_size=chunk_size), total = total_size/chunk_size, unit = 'KB'):
+                if chunk:
+                    f.write(chunk)
+
+        # print("File " + str(soundNumber) + " successfully downloaded")
+        soundNumber = soundNumber + 1
+
+    print("Page " + str(page) + " fully downloaded")

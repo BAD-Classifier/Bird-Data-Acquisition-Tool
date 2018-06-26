@@ -22,7 +22,14 @@ currentPage = data['page']
 totalPages = data['numPages']
 recordingsPerPage = len(data['recordings'])
 
-for page in range(1, totalPages):
+
+# Enter the page numbers here manually if desired"
+startPage = 3
+endPage = 4
+
+# for page in range(1, totalPages):
+
+for page in range(startPage, endPage):
     response = requests.get(pageAPIEndPoint + str(page))
     data = response.json()
     recordingsPerPage = len(data['recordings'])

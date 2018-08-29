@@ -5,12 +5,17 @@ import os
 from tqdm import tqdm
 # Requires the pip packages to be installed
 
-# Specify API endpoint to the recordings in the country of South Africa
 baseAPIEndPoint = 'http://www.xeno-canto.org/api/2/recordings?query=cnt:south_africa'
+# Specify API endpoint to the recordings in the country of South Africa and the pag of th
 pageAPIEndPoint = 'http://www.xeno-canto.org/api/2/recordings?query=cnt:south_africa&page='
+
+# In order to segment and split up the downloads, the files are downloaded in a batch of 500 from each api page
+# Enter the desired page number to download
 apiPage = 1
-chunk_size = 1024
+
 soundNumber = 1
+
+chunk_size = 1024
 
 # Use a GET request and store in the response object
 response = requests.get(baseAPIEndPoint)
@@ -24,8 +29,8 @@ recordingsPerPage = len(data['recordings'])
 
 
 # Enter the page numbers here manually if desired"
-startPage = 3
-endPage = 4
+startPage = 1
+endPage = 2
 
 # for page in range(1, totalPages):
 

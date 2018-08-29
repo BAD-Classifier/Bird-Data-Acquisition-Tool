@@ -6,5 +6,5 @@ Example output
 python3 XenoCantoHabere.py
 ```
 
-![Console Out](https://imgur.com/a/O5JXvih)
+![Console Out](https://i.imgur.com/G3DZ62s.png)
 
